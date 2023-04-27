@@ -1,0 +1,57 @@
+// 本文件复制于 react.config.js，所以注释部分可能有偏差
+import { getPackageJSON, resolvePkgPath, getBaseRollupPlugins } from './utils.js'
+import generatePackageJson from 'rollup-plugin-generate-package-json';
+import alias from '@rollup/plugin-alias';
+
+// 通过传入react，调用该函数，我们就能获取react包中的package.json内容
+// 然后从获取的json格式获取数据(具体数据在package.json中)
+const { name, module } = getPackageJSON('react-dom')
+
+const pkgPath = resolvePkgPath(name); // react-dom 包的路径
+const pkgDistPath = resolvePkgPath(name, true)  // react-dom 包的打包产物存放的路径
+
+export default [
+    // 对应react-dom包
+    {
+        // module字段放置的就是入口文件
+        input: `${pkgPath}/${module}`,
+        output: [{
+            file: `${pkgDistPath}/index.js`,
+            name: 'index.js',
+            format: 'umd',  // 兼容commonjs和es module的格式
+        },
+        {
+            // 为了兼容react18
+            file: `${pkgDistPath}/client.js`,
+            name: 'client.js',
+            format: 'umd',  // 兼容commonjs和es module的格式
+        }],
+        plugins: [...getBaseRollupPlugins(),
+        // webpack resolve alias
+        alias({
+            entries: {
+                hostConfig: `${pkgPath}/src/hostConfig.ts`
+            }
+
+        }
+
+        ),
+        generatePackageJson({
+            inputFolder: pkgPath,
+            outputFolder: pkgDistPath,
+            // 不需要所有的package.json中的内容，只需要下列指定的内容
+            baseContents: ({
+                name,
+                description,
+                version,
+            }) => ({
+                name, description, version,
+                peerDependencies: {
+                    react: version
+                },
+                main: 'index.js'
+            })
+        })]
+    }
+
+]

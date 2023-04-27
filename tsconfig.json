@@ -1,14 +1,27 @@
 {
+    "compileOnSave": true,
     "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
+      "target": "ESNext",
+      "module": "ESNext",
       "outDir": "dist",
       "strict": true,
       "esModuleInterop": true,
+      "sourceMap": true,
       "moduleResolution": "node",
-      "baseUrl": "./packages"
+      "skipLibCheck": true,
+      "baseUrl": "./packages",
+      "noImplicitReturns":false,
+      "noUnusedParameters": false,
+      "noUnusedLocals": false,
+      "noEmit": true,
+      "isolatedModules": true,
+      "resolveJsonModule": true,
+      
+
+      "paths":{
+        "hostConfig": ["./react-dom/src/hostConfig.ts"] 
+      }
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "**/*.spec.ts"]
+
   }
   
